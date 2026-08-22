@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef VEC3_H
 #define VEC3_H
 
@@ -11,10 +9,10 @@ class vec3
 public:
     vec3() : vc{0, 0, 0} {}
     vec3(double e0, double e1, double e2) : vc{e0, e1,e2} {}
+
     double& x() { return vc[0]; }
     double& y() { return vc[1]; }
     double& z() { return vc[2]; }
-
     const double& x() const { return vc[0]; }
     const double& y() const { return vc[1]; }
     const double& z() const { return vc[2]; }

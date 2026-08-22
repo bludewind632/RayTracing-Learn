@@ -12,7 +12,6 @@
 // #define IMG_WIDTH 256
 // #define IMG_HEIGHT 256
 
-static int hit_cnt = 0;
 /**
  * point3 C = (x0, y0, z0); 
  * point3 P = (x, y, z);
@@ -23,21 +22,40 @@ static int hit_cnt = 0;
  * D*D*t*t + 2D(Q - C)t + (Q - C)*(Q - C) - r * r = 0;
  * discriminant = b * b - 4 * a * c;
  * a = D * D;
- * b = 2D(Q - C);
- * c = (Q - C)*(Q - C) - r * r;
+ * b = -2D(C - Q);
+ * c = (C - Q)*(C - Q) - r * r;
  */
-bool hit_sphere(const ray& r, const point3& center, double radius) {
+//
+/**
+ * Simplify the intersection judgement code
+ * discriminant = b * b - 4 * a * c;
+ * root = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+ * root = (2D(C - Q) - sqrt(4D * D * (C - Q) * (C - Q) - 4 * a * c)) / (2 * a);
+ * root = (D(C - Q) - sqrt(D * D * (C - Q) * (C - Q) - a * c)) / a;
+ * let h = D(C - Q);
+ * root = (h - sqrt(h * h - a * c)) / a;
+ */
+double hit_sphere(const ray& r, const point3& center, double radius) {
+    auto oc = center - r.origin();
     double a = r.direction() * r.direction();
-    double b = 2 * r.direction() * (r.origin() - center);
-    double c = (r.origin() - center) * (r.origin() - center) - radius * radius;
-    double discriminant = b * b - 4 * a * c;
-    return discriminant >= 0;
+    double h = r.direction() * oc;
+    double c = oc.length_square() - radius * radius;
+    double discriminant = h * h - a * c;
+    if (discriminant < 0) {
+        return -1.0;
+    } else {
+        // root formula
+        double t = (h - std::sqrt(discriminant)) / a;
+        return t;
+    }
 }
 
 const color ray_color(ray& r) {
-    if (hit_sphere(r, point3(0, 0, -1), 0.2)) {
-        hit_cnt++;
-        return color(1, 0, 0);
+    auto camera_center = point3(0, 0, -1);
+    double t = hit_sphere(r, camera_center, 0.5);
+    if (t > 0.0) {
+        vec3 normal_vec = unit_vector(r.at(t) - camera_center);
+        return 0.5 * color(normal_vec.x() + 1, normal_vec.y() + 1, normal_vec.z() + 1);
     }
     vec3 unit_direction = unit_vector(r.direction());
     auto a = 0.5 * (unit_direction.y() + 1.0);
@@ -56,8 +74,8 @@ int main() {
     int img_width = 400;
     int img_height = int(img_width / aspect_ratio);
 
-    int viewport_height = 2.0;
-    int viewport_width = viewport_height * ((double)img_width / img_height);
+    double viewport_height = 2.0;
+    double viewport_width = viewport_height * ((double)img_width / img_height);
 
     auto viewport_u = vec3(viewport_width, 0, 0);
     auto viewport_v = vec3(0, -viewport_height, 0);
@@ -73,7 +91,7 @@ int main() {
     fout << "P3\n" << img_width << " " << img_height << "\n255\n";
     for (int y = 0; y < img_height; y++) {
         // \r Enter
-        // std::clog << "\rScanlines Remaining: " << std::setw(3) << img_height - y << std::flush;
+        std::clog << "\rScanlines Remaining: " << std::setw(3) << img_height - y << std::flush;
         for (int x = 0; x < img_width; x++) {
             auto cur_pixel_loc = pixel00_loc + x * viewport_delta_u + y * viewport_delta_v;
             auto cur_direction = cur_pixel_loc - camera_center;
@@ -84,9 +102,7 @@ int main() {
         }
         // std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-    // std::clog << "\rDone!                   \n";
+    std::clog << "\rDone!                   \n";
     fout.close();
-
-    std::cout << hit_cnt << std::endl;
     return 0;
 }
