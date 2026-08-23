@@ -2,11 +2,13 @@
 #define HITTABLE_LIST_H
 
 #include "hittable.h"
+#include "rtweekend.h"
 #include <vector>
-#include <memory>
 
-using std::shared_ptr;
-using std::make_shared;
+/**
+ * The function of shared_ptr:
+ * allows multiple geometries to share a common instance
+ */
 
 class hittable_list : public hittable
 {
