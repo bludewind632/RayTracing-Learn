@@ -26,7 +26,10 @@ public:
         }
         rec.t = root;
         rec.p = r.at(rec.t);
-        rec.normal = (rec.p - center) / radius;
+        vec3 outward_normal = (rec.p - center) / radius;
+        rec.ser_face_normal(r, outward_normal);
+        
+        return true;
     }
 };
 #endif // SPHERE_H
