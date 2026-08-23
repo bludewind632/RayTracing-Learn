@@ -50,6 +50,7 @@ double hit_sphere(const ray& r, const point3& center, double radius) {
     }
 }
 
+// Shading with surface normals
 const color ray_color(ray& r) {
     auto camera_center = point3(0, 0, -1);
     double t = hit_sphere(r, camera_center, 0.5);
