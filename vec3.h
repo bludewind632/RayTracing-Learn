@@ -5,7 +5,6 @@
 
 class vec3
 {
-    double vc[3];
 public:
     vec3() : vc{0, 0, 0} {}
     vec3(double e0, double e1, double e2) : vc{e0, e1,e2} {}
@@ -63,7 +62,8 @@ public:
     friend vec3 unit_vector(const vec3& a);
     friend double dot(const vec3& a, const vec3& b);
     friend vec3 cross(const vec3& a, const vec3& b);
-
+private:
+    double vc[3];
 };
 
 vec3 operator+ (const vec3& a, const vec3& b) {

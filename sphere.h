@@ -6,8 +6,6 @@
 
 class sphere : public hittable
 {
-    point3 center;
-    double radius;
 public:
     sphere(const point3& c, double r) : center(c), radius(std::fmax(0, r)) {}
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
@@ -34,6 +32,9 @@ public:
 
         return true;
     }
+private:
+    point3 center;
+    double radius;
 };
 #endif // SPHERE_H
 

@@ -1,6 +1,9 @@
 #ifndef RTWEEKEND_H
 #define RTWEEKEND_H
 
+// macro
+#define FILENAME "color.ppm"
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -26,5 +29,6 @@ inline double degrees_to_radians(const double& degrees) {
 #include "ray.h"
 #include "color.h"
 #include "interval.h"
+#include "camera.h"
 
 #endif // RTWEEKEND_H
