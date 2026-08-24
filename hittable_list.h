@@ -25,12 +25,12 @@ public:
         objects.push_back(object);
     }
 
-    bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const {
         hit_record tmp_rec;
-        bool hit_anything = true;
-        double closest_so_far = ray_tmax;
+        bool hit_anything = false;
+        double closest_so_far = ray_t.max;
         for (auto& object : objects) {
-            if (hit(r, ray_tmin, closest_so_far, tmp_rec)) {
+            if (object->hit(r, interval(ray_t.min, closest_so_far), tmp_rec)) {
                 hit_anything = true;
                 closest_so_far = tmp_rec.t;
                 rec = tmp_rec;

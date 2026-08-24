@@ -2,9 +2,11 @@
 #define RTWEEKEND_H
 
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <memory>
 #include <numeric>
+#include <iomanip>
 
 // Std Usings
 using std::shared_ptr;
@@ -23,5 +25,6 @@ inline double degrees_to_radians(const double& degrees) {
 #include "vec3.h"
 #include "ray.h"
 #include "color.h"
+#include "interval.h"
 
 #endif // RTWEEKEND_H
