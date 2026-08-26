@@ -11,10 +11,15 @@ public:
     double size() const { return max - min; }
     bool contains(double location) const { return location >= min && location <= max; }
     bool surrounds(double location) const { return location > min && location < max; }
+    double clamp(double x) const {
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
     static const interval empty, universe;
 };
 
 const interval interval::empty = interval();
 const interval interval::universe = interval(-infinity, infinity);
 
-#endif // INYERVAL_H
+#endif // INTERVAL_H
