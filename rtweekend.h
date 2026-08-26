@@ -11,6 +11,7 @@
 #include <memory>
 #include <numeric>
 #include <iomanip>
+#include <random>
 
 // Std Usings
 using std::shared_ptr;
@@ -26,7 +27,10 @@ inline double degrees_to_radians(const double& degrees) {
 }
 
 inline double random_double() {
-    return rand() / (RAND_MAX + 1.0);
+    // return rand() / (RAND_MAX + 1.0);
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
     // get random real in [0,1)
 }
 
@@ -40,6 +44,5 @@ inline double random_double(double min, double max) {
 #include "ray.h"
 #include "color.h"
 #include "interval.h"
-#include "camera.h"
 
 #endif // RTWEEKEND_H

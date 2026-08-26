@@ -1,7 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "rtweekend.h"
 #include "hittable.h"
+
 
 class camera 
 {
@@ -20,7 +22,7 @@ public:
         fout << "P3\n" << img_width << " " << img_height << "\n255\n";
         for (int y = 0; y < img_height; y++) {
             // \r Enter
-            std::clog << "\rScanlines Remaining: " << std::setw(3) << img_height - y << std::flush;
+            // std::clog << "\rScanlines Remaining: " << std::setw(3) << img_height - y << std::flush;
             for (int x = 0; x < img_width; x++) {
                 color pixel_color(0, 0, 0);
                 for (int k = 0; k < samples_per_pixel; k++) {
@@ -80,7 +82,9 @@ private:
     color ray_color(const ray& r, const hittable& world) const {
         hit_record rec;
         if (world.hit(r, interval(0, infinity), rec)) {
-            return 0.5 * (rec.normal + color(1, 1, 1));
+            vec3 direction = random_on_hemisphere(rec.normal);
+            return 0.5 * ray_color(ray(rec.p, direction), world);
+            // return 0.5 * (rec.normal + color(1, 1, 1));
         }
         vec3 unit_direction = unit_vector(r.direction());
         double a = 0.5 * (unit_direction.y() + 1.0);

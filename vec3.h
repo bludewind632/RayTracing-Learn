@@ -1,7 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include "rtweekend.h"
+constexpr double EPS = 1e-160;
 
 class vec3
 {
@@ -53,6 +53,13 @@ public:
         return vc[0] * vc[0] + vc[1] * vc[1] + vc[2] * vc[2];
     }
 
+    static vec3 random() {
+        return vec3(random_double(), random_double(), random_double());
+    }
+    static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+    }
+
     friend vec3 operator+ (const vec3& a, const vec3& b);
     friend vec3 operator- (const vec3& a, const vec3& b);
     friend double operator* (const vec3& a, const vec3& b);
@@ -60,6 +67,8 @@ public:
     friend vec3 operator* (double t, const vec3& a);
     friend vec3 operator/ (const vec3& a, double t);
     friend vec3 unit_vector(const vec3& a);
+    friend vec3 random_unit_vector();
+    friend vec3 random_on_hemisphere(const vec3& normal);
     friend double dot(const vec3& a, const vec3& b);
     friend vec3 cross(const vec3& a, const vec3& b);
 private:
@@ -84,10 +93,29 @@ vec3 operator* (double t, const vec3& a) {
 vec3 operator/ (const vec3& a, double t) {
     return a * (1 / t);
 }
+
 vec3 unit_vector(const vec3& a) {
-    double t = a.length();
-    return a / t;
+    return a / a.length();;
 }
+
+vec3 random_unit_vector() {
+    while (true) {
+        auto p = vec3::random(-1, 1);
+        double len_sq = p.length_square();
+        if (len_sq > EPS && len_sq <= 1) {
+            return p / sqrt(len_sq);
+        }
+    }
+}
+
+vec3 random_on_hemisphere(const vec3& normal) {
+    auto on_unit_sphere = random_unit_vector();
+    if (on_unit_sphere * normal > 0.0) {
+        return on_unit_sphere;
+    }
+    else return -on_unit_sphere;
+}
+
 double dot(const vec3& a, const vec3& b) {
     return a * b;
 }
