@@ -60,6 +60,11 @@ public:
         return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
     }
 
+    bool near_zero() const {
+        auto eps = 1e-8;
+        return (std::fabs(vc[0]) < eps) && (std::fabs(vc[1]) < eps) && (std::fabs(vc[2]) < eps);
+    }
+
     friend vec3 operator+ (const vec3& a, const vec3& b);
     friend vec3 operator- (const vec3& a, const vec3& b);
     friend double operator* (const vec3& a, const vec3& b);

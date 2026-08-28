@@ -7,7 +7,9 @@
 class sphere : public hittable
 {
 public:
-    sphere(const point3& c, double r) : center(c), radius(std::fmax(0, r)) {}
+    sphere(const point3& c, double r) : center(c), radius(std::fmax(0, r)) {
+        // to do: initialize the material pointer "mat"
+    }
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         
         auto oc = center - r.origin();
@@ -29,12 +31,14 @@ public:
         rec.p = r.at(rec.t);
         vec3 outward_normal = (rec.p - center) / radius;
         rec.set_face_normal(r, outward_normal);
+        rec.mat = mat;
 
         return true;
     }
 private:
     point3 center;
     double radius;
+    shared_ptr<material> mat;
 };
 #endif // SPHERE_H
 
