@@ -7,14 +7,14 @@
 class sphere : public hittable
 {
 public:
-    sphere(const point3& c, double r) : center(c), radius(std::fmax(0, r)) {
+    sphere(const point3& c, double r, shared_ptr<material> m) : center(c), radius(std::fmax(0, r)), mat(m) {
         // to do: initialize the material pointer "mat"
     }
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         
         auto oc = center - r.origin();
-        double a = r.direction() * r.direction();
-        double h = r.direction() * oc;
+        double a = dot(r.direction(), r.direction());
+        double h = dot(r.direction(), oc);
         double c = oc.length_square() - radius * radius;
         double discriminant = h * h - a * c;
         if (discriminant < 0) return false;

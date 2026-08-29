@@ -3,7 +3,7 @@
 
 #include "rtweekend.h"
 #include "hittable.h"
-
+#include "material.h"
 
 class camera 
 {
@@ -22,7 +22,6 @@ public:
         }
         fout << "P3\n" << img_width << " " << img_height << "\n255\n";
         for (int y = 0; y < img_height; y++) {
-            // \r Enter
             // std::clog << "\rScanlines Remaining: " << std::setw(3) << img_height - y << std::flush;
             for (int x = 0; x < img_width; x++) {
                 color pixel_color(0, 0, 0);
@@ -32,7 +31,6 @@ public:
                 }
                 write_color(fout, pixel_samples_scale * pixel_color);
             }
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         std::clog << "\rDone!                   \n";
         fout.close();
@@ -84,10 +82,12 @@ private:
         if (depth < 0) return color(0, 0, 0);
         hit_record rec;
         if (world.hit(r, interval(0.001, infinity), rec)) {
-            // the simulation of lambertian reflection
-            vec3 direction = rec.normal + random_unit_vector();
-            return 0.5 * ray_color(ray(rec.p, direction), depth - 1, world);
-            // return 0.5 * (rec.normal + color(1, 1, 1));
+            ray scattered;
+            color attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+                return attenuation * ray_color(scattered, depth - 1, world);
+            }
+            return color(0, 0, 0);
         }
         vec3 unit_direction = unit_vector(r.direction());
         double a = 0.5 * (unit_direction.y() + 1.0);

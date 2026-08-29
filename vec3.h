@@ -67,15 +67,17 @@ public:
 
     friend vec3 operator+ (const vec3& a, const vec3& b);
     friend vec3 operator- (const vec3& a, const vec3& b);
-    friend double operator* (const vec3& a, const vec3& b);
+    friend vec3 operator* (const vec3& a, const vec3& b);
     friend vec3 operator* (const vec3& a, double t);
     friend vec3 operator* (double t, const vec3& a);
     friend vec3 operator/ (const vec3& a, double t);
+    
     friend vec3 unit_vector(const vec3& a);
     friend vec3 random_unit_vector();
     friend vec3 random_on_hemisphere(const vec3& normal);
     friend double dot(const vec3& a, const vec3& b);
     friend vec3 cross(const vec3& a, const vec3& b);
+    friend vec3 reflect(const vec3& v, const vec3& n);
 private:
     double vc[3];
 };
@@ -86,8 +88,8 @@ vec3 operator+ (const vec3& a, const vec3& b) {
 vec3 operator- (const vec3& a, const vec3& b) {
     return vec3(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());
 }
-double operator* (const vec3& a, const vec3& b) {
-    return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
+vec3 operator* (const vec3& a, const vec3& b) {
+    return vec3(a.x() * b.x(), a.y() * b.y(), a.z() * b.z());
 }
 vec3 operator* (const vec3& a, double t) {
     return vec3(a.x() * t, a.y() * t, a.z() * t);
@@ -115,20 +117,25 @@ vec3 random_unit_vector() {
 
 vec3 random_on_hemisphere(const vec3& normal) {
     auto on_unit_sphere = random_unit_vector();
-    if (on_unit_sphere * normal > 0.0) {
+    if (dot(on_unit_sphere, normal) > 0.0) {
         return on_unit_sphere;
     }
     else return -on_unit_sphere;
 }
 
 double dot(const vec3& a, const vec3& b) {
-    return a * b;
+    return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 }
 vec3 cross(const vec3& a, const vec3& b) {
     double e0 = a.y() * b.z() - b.y() * a.z();
     double e1 = b.x() * a.z() - a.x() * b.z();
     double e2 = a.x() * b.y() - b.x() * a.y();
     return vec3(e0, e1, e2);
+}
+
+// get the mirror reflect ray
+vec3 reflect(const vec3& v, const vec3& n) {
+    return v + 2 * (-dot(v, n)) * n;
 }
 
 using point3 = vec3;

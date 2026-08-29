@@ -10,7 +10,7 @@ class hit_record
 public:
     point3 p; // intersection point
     vec3 normal; // unit_normal_vector
-    double t;
+    double t; // ray.origin() + t * ray.direction()
     bool front_face;
     shared_ptr<material> mat;
 
