@@ -29,15 +29,17 @@ private:
 // mirror reflection(metal)
 class metal: public material {
 public:
-    metal(const color& clr): labedo(clr) {}
+    metal(const color& _labedo, double _fuzz): labedo(_labedo), fuzz(_fuzz < 1 ? _fuzz : 1) {}
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
         vec3 reflected = reflect(r_in.direction(), rec.normal);
+        reflected = unit_vector(reflected) + fuzz * random_unit_vector();
         scattered = ray(rec.p, reflected);
         attenuation = labedo;
-        return true;
+        return (dot(scattered.direction(), rec.normal) > 0);
     }
 private:
     color labedo;
+    double fuzz;
 };
 
 #endif // MATERIAL_H
