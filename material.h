@@ -54,8 +54,18 @@ public:
         attenuation = color(1.0, 1.0, 1.0);
         double etai_over_etat = rec.front_face ? (1.0 / refraction_index) : refraction_index;
         auto r_in_unit_direction = unit_vector(r_in.direction());
-        auto refracted = refract(r_in_unit_direction, rec.normal, etai_over_etat);
-        scattered = ray(rec.p, refracted);
+        
+        double cos_theta = std::fmin(-dot(r_in_unit_direction, rec.normal), 1.0);
+        double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
+        
+        bool cannot_refracted = etai_over_etat * sin_theta > 1.0;
+        vec3 final_direction;
+        if (cannot_refracted) {
+            final_direction = reflect(r_in_unit_direction, rec.normal);
+        } else {
+            final_direction = refract(r_in_unit_direction, rec.normal, etai_over_etat);
+        }
+        scattered = ray(rec.p, final_direction);
         return true;
     }
 private:
