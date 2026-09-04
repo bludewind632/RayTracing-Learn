@@ -77,7 +77,8 @@ public:
     friend vec3 random_on_hemisphere(const vec3& normal);
     friend double dot(const vec3& a, const vec3& b);
     friend vec3 cross(const vec3& a, const vec3& b);
-    friend vec3 reflect(const vec3& v, const vec3& n);
+    friend vec3 reflect(const vec3& r_in, const vec3& n);
+    friend vec3 refract(const vec3& r_in, const vec3& n, double etai_over_etat);
 private:
     double vc[3];
 };
@@ -134,8 +135,15 @@ vec3 cross(const vec3& a, const vec3& b) {
 }
 
 // get the mirror reflect ray
-vec3 reflect(const vec3& v, const vec3& n) {
-    return v + 2 * (-dot(v, n)) * n;
+vec3 reflect(const vec3& r_in, const vec3& n) {
+    return r_in + 2 * (-dot(r_in, n)) * n;
+}
+
+vec3 refract(const vec3& r_in, const vec3& n, double etai_over_etat) {
+    auto cos_theta = std::fmin(dot(-r_in, n), 1.0);
+    vec3 r_out_perp = etai_over_etat * (r_in + cos_theta * n);
+    vec3 r_out_parallel = -std::sqrt(fabs(1.0 - r_out_perp.length_square())) * n;
+    return r_out_perp + r_out_parallel;
 }
 
 using point3 = vec3;
